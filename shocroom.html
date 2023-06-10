@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Urgentrack</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            height: 1000px;
+            margin-bottom: 50px;
+        }
+
+        #statistics {
+            margin-bottom: 20px;
+        }
+
+        .hospital-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Créer une carte Leaflet
+        var map = L.map('map').setView([36.8, 10.2], 10);
+    
+        // Ajouter une couche de tuiles de fond
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+    
+        // Récupérer les données JSON à partir du fichier data.php
+        fetch('data.php')
+            .then(response => response.json())
+            .then(data => {
+                // Parcourir le tableau de données des hôpitaux
+                for (var i = 0; i < data.length; i++) {
+                    var hospital = data[i];
+    
+                    // Récupérer les coordonnées de l'hôpital
+                    var latitude = parseFloat(hospital.latitude);
+                    var longitude = parseFloat(hospital.longitude);
+    
+                    // Créer un marqueur et l'ajouter à la carte
+                    var marker = L.marker([latitude, longitude]).addTo(map);
+    
+                    // Ajouter une info-bulle au marqueur avec le nom de l'hôpital
+                    marker.bindPopup(hospital.name);
+                }
+            })
+            .catch(error => {
+                console.log('Une erreur s\'est produite lors de la récupération des données JSON :', error);
+            });
+    </script>
+</body>
+</html>
